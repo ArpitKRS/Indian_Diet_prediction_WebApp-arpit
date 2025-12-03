@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diet Recommendation Result</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 750px;
+            margin: 50px auto;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 25px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+        }
+
+        .diet-box {
+            margin-top: 25px;
+            background: #e8f5e9;
+            padding: 15px;
+            border-left: 5px solid #2ecc71;
+            border-radius: 5px;
+        }
+
+        .food-list {
+            margin-top: 20px;
+            padding: 10px;
+            background: #e3f2fd;
+            border-left: 5px solid #2196f3;
+            border-radius: 5px;
+        }
+
+        ul {
+            padding-left: 20px;
+        }
+
+        .back-btn {
+            margin-top: 25px;
+            display: inline-block;
+            background: #34495e;
+            color: white;
+            padding: 10px 15px;
+            border-radius: 5px;
+            text-decoration: none;
+        }
+
+        .back-btn:hover {
+            background: #2c3e50;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+
+        <h1>Your Personalized Diet Recommendation</h1>
+
+        <p>Hello <strong>{{ name }}</strong>,</p>
+
+        <div class="diet-box">
+            <h3>Recommended Diet Type:</h3>
+            <p style="font-size:20px;font-weight:bold;color:#27ae60;">
+                {{ predicted_diet }}
+            </p>
+        </div>
+
+        <div class="food-list">
+            <h3>Food suggestions for <strong>{{ user_state }}</strong>:</h3>
+
+            {% if foods %}
+                <ul>
+                    {% for f in foods %}
+                        <li>{{ f }}</li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p>No food recommendations found.</p>
+            {% endif %}
+        </div>
+
+        <a href="/prediction.html" class="back-btn">⬅ Back to Prediction Form</a>
+
+    </div>
+
+</body>
+</html>

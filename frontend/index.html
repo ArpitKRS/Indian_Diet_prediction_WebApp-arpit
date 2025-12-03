@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AIPT Mini Project - Indian Diet Recommendation System</title>
+
+    <script src="https://www.gstatic.com/charts/loader.js"></script>
+
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: linear-gradient(to right, #f0f4f7, #d9e2ec);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        h1 {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 2.2rem;
+            color: #1a202c;
+            margin-bottom: 10px;
+        }
+
+        h3 {
+            margin-top: 5px;
+            font-size: 1.5rem;
+        }
+
+        #container {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            gap: 40px;
+            margin-top: 30px;
+            flex-wrap: wrap;
+        }
+
+        .card {
+            background: #fff;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+            border-radius: 12px;
+            padding: 20px;
+        }
+
+        #visualization {
+            width: 900px;
+            height: 600px;
+            border-radius: 12px;
+        }
+
+        #cuisine-list {
+            width: 300px;
+            padding: 20px;
+            min-height: 200px;
+        }
+
+        #cuisine-list h3 {
+            color: #ff5722;
+            margin-bottom: 12px;
+        }
+
+        #cuisine-list ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        #cuisine-list li {
+            padding: 6px 0;
+            border-bottom: 1px dashed #ccc;
+        }
+
+        #visualization svg path:hover {
+            stroke: #ff5722;
+            stroke-width: 2;
+            filter: drop-shadow(0 0 10px #ff9800);
+            transition: all 0.3s ease-in-out;
+            cursor: pointer;
+        }
+
+        #predict-btn {
+            margin-top: 50px;
+            padding: 12px 28px;
+            background-color: #ff5722;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            align-self: center;
+        }
+
+        #predict-btn:hover {
+            background-color: #e64a19;
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+
+<body>
+    <h1>AIPT Mini Project</h1>
+    <h3>Indian Diet Recommendation System</h3>
+
+    <div id="container">
+
+        <div class="card">
+            <div id="visualization"></div>
+        </div>
+
+        <div id="right-panel">
+
+            <div class="card" id="cuisine-list">
+                <h3>Top 5 Cuisines</h3>
+                <p>Hover or click on a state to see its famous cuisines.</p>
+            </div>
+
+            <button id="predict-btn" onclick="window.location.href='/prediction.html'">
+                Try Diet Prediction
+            </button>
+        </div>
+
+    </div>
+
+    <script>
+        google.charts.load('current', {'packages':['geochart']});
+        google.charts.setOnLoadCallback(drawVisualization);
+
+        function drawVisualization() {
+
+            var data = google.visualization.arrayToDataTable([
+                ['State Code', 'State', 'Population'],
+                ['IN-AN', 'Andaman & Nicobar Islands', 380581],
+                ['IN-AP', 'Andhra Pradesh', 53903393],
+                ['IN-AR', 'Arunachal Pradesh', 1570458],
+                ['IN-AS', 'Assam', 35607039],
+                ['IN-BR', 'Bihar', 124799930],
+                ['IN-CH', 'Chandigarh', 1158473],
+                ['IN-CT', 'Chhattisgarh', 29436231],
+                ['IN-DN', 'Dadra & Nagar Haveli and Daman & Diu', 586956],
+                ['IN-DL', 'Delhi', 19814000],
+                ['IN-GA', 'Goa', 1586250],
+                ['IN-GJ', 'Gujarat', 63872399],
+                ['IN-HR', 'Haryana', 28904000],
+                ['IN-HP', 'Himachal Pradesh', 7300000],
+                ['IN-JH', 'Jharkhand', 38593948],
+                ['IN-JK', 'Jammu & Kashmir', 13563000],
+                ['IN-KA', 'Karnataka', 67562686],
+                ['IN-KL', 'Kerala', 35699443],
+                ['IN-LA', 'Ladakh', 289023],
+                ['IN-LD', 'Lakshadweep', 64473],
+                ['IN-MH', 'Maharashtra', 123144223],
+                ['IN-ML', 'Meghalaya', 3366710],
+                ['IN-MN', 'Manipur', 3091545],
+                ['IN-MP', 'Madhya Pradesh', 85358965],
+                ['IN-MZ', 'Mizoram', 1239244],
+                ['IN-NL', 'Nagaland', 2249695],
+                ['IN-OR', 'Odisha', 46356334],
+                ['IN-PB', 'Punjab', 30141373],
+                ['IN-PY', 'Puducherry', 1504000],
+                ['IN-RJ', 'Rajasthan', 81032689],
+                ['IN-SK', 'Sikkim', 690251],
+                ['IN-TN', 'Tamil Nadu', 77841267],
+                ['IN-TG', 'Telangana', 39362732],
+                ['IN-TR', 'Tripura', 4169794],
+                ['IN-UP', 'Uttar Pradesh', 241066874],
+                ['IN-UT', 'Uttarakhand', 11250858],
+                ['IN-WB', 'West Bengal', 99609303]
+            ]);
+
+            var options = {
+                region: 'IN',
+                displayMode: 'regions',
+                resolution: 'provinces',
+                colorAxis: { colors: ['#FFE0B2', '#FF5722'] },
+                backgroundColor: 'transparent',
+                datalessRegionColor: '#eee',
+                enableRegionInteractivity: true
+            };
+
+            var chart = new google.visualization.GeoChart(document.getElementById('visualization'));
+            chart.draw(data, options);
+
+            var cuisines = {}; // your original cuisines object stays unchanged
+
+            google.visualization.events.addListener(chart, 'regionClick', function(e) {
+                var stateName = getStateNameByCode(e.region);
+                updateCuisineList(stateName);
+            });
+
+            google.visualization.events.addListener(chart, 'onmouseover', function(e) {
+                var stateName = getStateNameByCode(e.region);
+                updateCuisineList(stateName);
+            });
+
+            function updateCuisineList(state) {
+                var listDiv = document.getElementById('cuisine-list');
+                if (cuisines[state]) {
+                    listDiv.innerHTML =
+                        '<h3>Top 5 Cuisines of ' + state +
+                        '</h3><ul><li>' + cuisines[state].join('</li><li>') +
+                        '</li></ul>';
+                } else {
+                    listDiv.innerHTML =
+                        '<h3>' + state + '</h3><p>No cuisine data available.</p>';
+                }
+            }
+
+            function getStateNameByCode(code) {
+                var map = {
+                    'IN-UP': 'Uttar Pradesh', 'IN-MH': 'Maharashtra', 'IN-KA': 'Karnataka',
+                    'IN-TN': 'Tamil Nadu', 'IN-KL': 'Kerala', 'IN-GJ': 'Gujarat',
+                    'IN-PB': 'Punjab', 'IN-RJ': 'Rajasthan', 'IN-WB': 'West Bengal',
+                    'IN-TG': 'Telangana', 'IN-AP': 'Andhra Pradesh', 'IN-OR': 'Odisha',
+                    'IN-HR': 'Haryana', 'IN-HP': 'Himachal Pradesh', 'IN-JK': 'Jammu & Kashmir',
+                    'IN-JH': 'Jharkhand', 'IN-AS': 'Assam', 'IN-SK': 'Sikkim',
+                    'IN-ML': 'Meghalaya', 'IN-MN': 'Manipur', 'IN-BR': 'Bihar',
+                    'IN-MZ': 'Mizoram', 'IN-NL': 'Nagaland', 'IN-TR': 'Tripura',
+                    'IN-AN': 'Andaman & Nicobar Islands', 'IN-CH': 'Chandigarh',
+                    'IN-DN': 'Dadra & Nagar Haveli and Daman & Diu', 'IN-DL': 'Delhi',
+                    'IN-AR': 'Arunachal Pradesh', 'IN-GA': 'Goa', 'IN-LA': 'Ladakh',
+                    'IN-LD': 'Lakshadweep', 'IN-UT': 'Uttarakhand', 'IN-MP': 'Madhya Pradesh',
+                    'IN-CT': 'Chhattisgarh'
+                };
+                return map[code] || code;
+            }
+        }
+    </script>
+
+</body>
+</html>

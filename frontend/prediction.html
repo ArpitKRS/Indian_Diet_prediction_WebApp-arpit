@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diet Recommendation</title>
+    <link rel="stylesheet" href="pred_style.css">
+</head>
+
+<body>
+
+    <div class="container">
+        <h2>Diet Recommendation System</h2>
+
+        <form id="dietForm">
+
+            <div class="row">
+                <div class="column">
+                    <label>Name</label>
+                    <input type="text" id="name" required>
+                </div>
+
+                <div class="column">
+                    <label>State</label>
+                    <select id="state" required>
+                        <option value="" disabled selected>Select State</option>
+                        <option>Andhra Pradesh</option>
+                        <option>Arunachal Pradesh</option>
+                        <option>Assam</option>
+                        <option>Bihar</option>
+                        <option>Chhattisgarh</option>
+                        <option>Delhi</option>
+                        <option>Goa</option>
+                        <option>Gujarat</option>
+                        <option>Haryana</option>
+                        <option>Himachal Pradesh</option>
+                        <option>Jharkhand</option>
+                        <option>Karnataka</option>
+                        <option>Kerala</option>
+                        <option>Madhya Pradesh</option>
+                        <option>Maharashtra</option>
+                        <option>Manipur</option>
+                        <option>Meghalaya</option>
+                        <option>Mizoram</option>
+                        <option>Nagaland</option>
+                        <option>Odisha</option>
+                        <option>Punjab</option>
+                        <option>Rajasthan</option>
+                        <option>Sikkim</option>
+                        <option>Tamil Nadu</option>
+                        <option>Telangana</option>
+                        <option>Tripura</option>
+                        <option>Uttar Pradesh</option>
+                        <option>Uttarakhand</option>
+                        <option>West Bengal</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="column">
+                    <label>BP (Top/Bottom)</label>
+                    <input id="bp" placeholder="120/80" required>
+                </div>
+
+                <div class="column">
+                    <label>Daily Calories</label>
+                    <input type="number" id="dailyCalories" required>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="column">
+                    <label>Weight (kg)</label>
+                    <input type="number" id="weight" required>
+                </div>
+
+                <div class="column">
+                    <label>Glucose</label>
+                    <input type="number" id="glucose" required>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="column">
+                    <label>Heart Rate</label>
+                    <input type="number" id="heartRate" required>
+                </div>
+
+                <div class="column">
+                    <label>Stamina</label>
+                    <select id="stamina" required>
+                        <option value="" disabled selected>Select</option>
+                        <option>High</option>
+                        <option>Medium</option>
+                        <option>Low</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="row">
+
+                <div class="column">
+                    <label>Disease</label>
+                    <select id="disease" required>
+                        <option value="" disabled selected>Select</option>
+                        <option>Stress</option>
+                        <option>Hypertension</option>
+                        <option>None</option>
+                        <option>Diabetes</option>
+                        <option>Anxiety</option>
+                        <option>Thyroid</option>
+                        <option>Obesity</option>
+                        <option>LowIron</option>
+                    </select>
+                </div>
+
+                <div class="column">
+                    <label>Severity</label>
+                    <select id="severity" required>
+                        <option value="" disabled selected>Select</option>
+                        <option>Severe</option>
+                        <option>Moderate</option>
+                        <option>Mild</option>
+                        <option>None</option> <!-- restored correctly -->
+                    </select>
+                </div>
+            </div>
+
+            <button type="submit" class="predict-btn">Predict Diet</button>
+
+        </form>
+
+        <button class="back-btn" onclick="window.location.href='index.html'">
+            ⬅ Back to Home
+        </button>
+    </div>
+
+    <script>
+        document.getElementById("dietForm").addEventListener("submit", async (e) => {
+            e.preventDefault();
+
+            const bp = document.getElementById("bp").value.trim();
+            let [top, bottom] = bp.split("/");
+
+            if (!top || !bottom || isNaN(top) || isNaN(bottom)) {
+                alert("Please enter BP like 120/80");
+                return;
+            }
+
+            const final_bp = (parseFloat(top) + parseFloat(bottom)) / 2;
+
+            const data = {
+                username: document.getElementById("name").value,
+                state: document.getElementById("state").value,
+                weight: document.getElementById("weight").value,
+                bp: final_bp,
+                glucose: document.getElementById("glucose").value,
+                heartRate: document.getElementById("heartRate").value,
+                stamina: document.getElementById("stamina").value,
+                disease: document.getElementById("disease").value,
+                severity: document.getElementById("severity").value,
+                dailyCalories: document.getElementById("dailyCalories").value,
+            };
+
+            const res = await fetch("/predict", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(data)
+            });
+
+            const result = await res.json();
+
+            if (result.status === "success") {
+                window.location.href =
+                    `/result?name=${encodeURIComponent(data.username)}&state=${encodeURIComponent(data.state)}&diet=${encodeURIComponent(result.diet)}`;
+            } else {
+                alert("Error: " + result.message);
+            }
+        });
+    </script>
+
+</body>
+</html>
